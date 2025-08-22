@@ -51,14 +51,17 @@ export default function Home() {
             {/* Navigation */}
             <nav className="relative z-20 w-full bg-white/10 backdrop-blur-xl border-b border-white/20">
 
-                <div className=" mx-auto px-6 py-6">
+                <div className=" mx-auto px-4 sm:px-6 py-6">
                     <div className="flex items-center justify-between">
                         <div className="flex items-center space-x-3">
                             <div
-                                className="w-12 h-12 rounded-xl flex items-center justify-center shadow-lg"
-                                style={{ backgroundColor: '#1348a0' }}
+                                className="bg-transparent w-12 h-12 rounded-xl flex items-center justify-center shadow-lg"
                             >
-                                <Vote className="w-6 h-6 text-white" />
+                                <img
+                                    src="./atbu.png"
+                                    alt="DMSE"
+                                    className="aspect-square w-8 rounded-l"
+                                />                        
                             </div>
                             <div>
                                 <h1 className="text-lg sm:text-xl font-bold text-white">Abubakar Tafawa Balewa University</h1>
@@ -81,7 +84,11 @@ export default function Home() {
                             className="w-16 h-16 sm:w-24 sm:h-24 rounded-2xl flex items-center justify-center shadow-2xl transform hover:scale-110 transition-all duration-500"
                             style={{ backgroundColor: '#1348a0' }}
                         >
-                            <Vote className="w-8 h-8 sm:w-12 sm:h-12 text-white" />
+                                <img
+                                    src="./dmse.png"
+                                    alt="DMSE"
+                                    className="aspect-square w-25 rounded-l"
+                                />
                         </div>
                         <div className="absolute -top-2 -right-2 w-6 h-6 sm:w-8 sm:h-8 bg-green-400 rounded-full flex items-center justify-center animate-bounce">
                             <div className="w-3 h-3 bg-white rounded-full"></div>

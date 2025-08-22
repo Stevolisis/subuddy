@@ -13,6 +13,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Vote, Shield, User, Check, ArrowLeft, ChevronLeft, ChevronRight } from 'lucide-react';
 import { toast, Toaster } from 'sonner';
+import { useNavigate } from 'react-router-dom';
 
 export default function VotingPortal() {
   const [selectedVotes, setSelectedVotes] = useState({});
@@ -20,6 +21,7 @@ export default function VotingPortal() {
   const [registrationNumber, setRegistrationNumber] = useState('');
   const [password, setPassword] = useState('');
   const [currentSlides, setCurrentSlides] = useState({});
+  const navigate = useNavigate();
 
   const positions = [
     {
@@ -152,25 +154,32 @@ export default function VotingPortal() {
       </div>
 
       {/* Navigation */}
-      <nav className="relative z-20 w-full overflow-x-hidden! bg-white/10 backdrop-blur-xl border-b border-white/20">
-        <div className="mx-auto px-6 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-3">
-              <div
-                className="w-10 h-10 rounded-xl flex items-center justify-center shadow-lg"
-                style={{ backgroundColor: '#1348a0' }}
-              >
-                <Vote className="w-5 h-5 text-white" />
-              </div>
-              <div>
-                <h1 className="text-lg font-bold text-white">ATBU Mechatronics</h1>
-                <p className="text-xs text-gray-300">Voting Portal</p>
-              </div>
-            </div>
+    <nav className="relative z-20 w-full bg-white/10 backdrop-blur-xl border-b border-white/20">
 
-          </div>
+        <div className=" mx-auto px-4 sm:px-6 py-6">
+            <div className="flex items-center justify-between">
+                <div onClick={()=>navigate("/")} className="cursor-pointer flex items-center space-x-3">
+                    <div
+                        className="bg-transparent w-12 h-12 rounded-xl flex items-center justify-center shadow-lg"
+                    >
+                        <img
+                            src="./atbu.png"
+                            alt="DMSE"
+                            className="aspect-square w-8 rounded-l"
+                        />                        
+                    </div>
+                    <div>
+                        <h1 className="text-lg sm:text-xl font-bold text-white">Abubakar Tafawa Balewa University</h1>
+                        <p className="text-xs sm:text-sm text-gray-300">Electronic Voting System</p>
+                    </div>
+                </div>
+                <div className="hidden sm:flex items-center space-x-2 text-gray-300">
+                    <Shield className="w-4 h-4" />
+                    <span className="text-sm font-medium">Secure Platform</span>
+                </div>
+            </div>
         </div>
-      </nav>
+    </nav>
 
       <div className="relative z-10 w-full px-6 py-6">
         {/* Header */}
