@@ -116,7 +116,15 @@ export default function Home() {
                 </div>
 
             </main>
-
+            
+            {/* Footer */}
+            <footer className="absolute bottom-0 z-10 w-full bg-white/5 backdrop-blur-sm border-t border-white/10 py-6">
+                <div className="max-w-7xl mx-auto px-6 text-center">
+                <p className="text-sm text-gray-400">
+                    © 2025 Abubakar Tafawa Balewa University - Mechatronics Department
+                </p>
+                </div>
+            </footer>
         </div>        
     </div>
 
