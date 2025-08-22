@@ -12,6 +12,7 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Vote, Shield, User, Check, ArrowLeft, ChevronLeft, ChevronRight } from 'lucide-react';
+import { toast, Toaster } from 'sonner';
 
 export default function VotingPortal() {
   const [selectedVotes, setSelectedVotes] = useState({});
@@ -115,7 +116,7 @@ export default function VotingPortal() {
   const handleSubmit = () => {
     const votedPositions = Object.keys(selectedVotes).length;
     if (votedPositions === 0) {
-      alert('Please select at least one candidate to vote for.');
+      toast.success('Please select at least one candidate to vote for.');
       return;
     }
     setIsDialogOpen(true);
@@ -123,7 +124,7 @@ export default function VotingPortal() {
 
   const handleLogin = () => {
     if (!registrationNumber || !password) {
-      alert('Please fill in both registration number and password.');
+      toast.info('Please fill in both registration number and password.');
       return;
     }
     console.log('Vote submission:', { 
@@ -132,7 +133,7 @@ export default function VotingPortal() {
       password 
     });
     setIsDialogOpen(false);
-    alert('Your votes have been submitted successfully!');
+    toast.success('Your votes have been submitted successfully!');
     setSelectedVotes({});
     setRegistrationNumber('');
     setPassword('');
@@ -346,6 +347,7 @@ export default function VotingPortal() {
           </div>
         </DialogContent>
       </Dialog>
+      <Toaster />
     </div>
   );
 }
