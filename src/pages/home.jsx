@@ -1,59 +1,54 @@
-import React, { useState } from 'react';
-import { WalletMultiButton } from '@solana/wallet-adapter-react-ui';
+import { Button } from "@/components/ui/button";
+import { ArrowRight } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
-export default function Home() {
+const Home = () => {
+  const navigate = useNavigate();
+
   return (
-    <div className='w-screen'>
-        <div className="flex flex-col min-h-screen w-full bg-gradient-to-br from-slate-900 via-gray-900 to-slate-800">
+    <div className="bg-zinc-900 min-h-screen flex items-center justify-center px-6">
+      <div className="max-w-4xl text-center space-y-8">
+        {/* Title */}
+        <h1 className="text-4xl md:text-6xl font-extrabold text-white leading-tight">
+          Welcome to <span style={{ color: "#efe000" }}>SubBuddy</span>
+        </h1>
 
-            
-            {/* Animated Background Elements */}
-            <div className="absolute inset-0 w-full h-full">
-                <div className="absolute top-20 left-20 w-72 h-72 bg-blue-500/20 rounded-full blur-3xl animate-pulse"></div>
-                {/* <div className="absolute top-40 right-32 w-96 h-96 bg-purple-500/15 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
-                <div className="absolute bottom-40 left-40 w-64 h-64 bg-indigo-500/20 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '2s' }}></div> */}
+        {/* Subtitle */}
+        <p className="text-lg md:text-xl text-zinc-300 max-w-2xl mx-auto">
+          Share and join subscriptions effortlessly. Save money on your favorite
+          services by connecting with a community of trusted users.
+        </p>
 
-                <div className="absolute top-1/4 left-1/4 w-2 h-2 bg-white/40 rounded-full animate-ping" style={{ animationDelay: '0.5s' }}></div>
-                <div className="absolute top-3/4 right-1/4 w-1 h-1 bg-blue-400/60 rounded-full animate-ping" style={{ animationDelay: '1.5s' }}></div>
-                <div className="absolute top-1/2 left-3/4 w-1.5 h-1.5 bg-purple-400/50 rounded-full animate-ping" style={{ animationDelay: '2.5s' }}></div>
+        {/* CTA */}
+        <div className="flex justify-center">
+          <Button
+            size="lg"
+            className="flex items-center gap-2 font-semibold transition-all duration-200"
+            style={{
+              backgroundColor: "#efe000",
+              color: "#000",
+              border: "none",
+            }}
+            onMouseEnter={(e) => {
+              e.target.style.backgroundColor = "#d4c700";
+            }}
+            onMouseLeave={(e) => {
+              e.target.style.backgroundColor = "#efe000";
+            }}
+            onClick={() => navigate("/subscriptions")}
+          >
+            Explore Subscriptions
+            <ArrowRight className="w-5 h-5" />
+          </Button>
+        </div>
 
-                <div
-                className="absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-white/5 to-transparent opacity-30 animate-pulse"
-                style={{
-                    backgroundImage: 'radial-gradient(circle at 1px 1px, white 1px, transparent 0)',
-                    backgroundSize: '50px 50px',
-                }}
-                ></div>
-            </div>
-
-            {/* Navigation */}
-            <nav className="relative z-20 w-full bg-white/10 backdrop-blur-xl border-b border-white/20">
-
-                <div className=" mx-auto px-4 sm:px-6 py-6">
-                    <div className="flex items-center justify-between">
-                        <div className="flex items-center space-x-3">
-                            <div
-                                className="bg-transparent w-12 h-12 rounded-xl flex items-center justify-center shadow-lg"
-                            >
-                                <img
-                                    src="./subuddy.png"
-                                    alt="DMSE"
-                                    className="aspect-square w-8 rounded-l"
-                                />                        
-                            </div>
-                            <div>
-                                <h1 className="text-lg sm:text-xl font-bold text-white">Subuddy</h1>
-                            </div>
-                        </div>
-                        <div className="hidden sm:flex items-center space-x-2 text-gray-300">
-                            <WalletMultiButton />
-                        </div>
-                    </div>
-                </div>
-            </nav>
-
-        </div>        
+        {/* Optional highlight */}
+        <p className="text-sm text-zinc-400">
+          Start saving today — find your perfect subscription buddy.
+        </p>
+      </div>
     </div>
-
   );
-}
+};
+
+export default Home;
