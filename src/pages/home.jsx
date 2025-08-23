@@ -1,29 +1,7 @@
 import React, { useState } from 'react';
-import { Button } from '@/components/ui/button';
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from '@/components/ui/dialog';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Vote, Shield, Lock } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { WalletMultiButton } from '@solana/wallet-adapter-react-ui';
 
 export default function Home() {
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [registrationNumber, setRegistrationNumber] = useState('');
-  const [password, setPassword] = useState('');
-  const navigate = useNavigate();
-
-  const handleLogin = () => {
-    console.log('Login attempt:', { registrationNumber, password });
-    setIsDialogOpen(false);
-  };
-
   return (
     <div className='w-screen'>
         <div className="flex flex-col min-h-screen w-full bg-gradient-to-br from-slate-900 via-gray-900 to-slate-800">
@@ -58,80 +36,22 @@ export default function Home() {
                                 className="bg-transparent w-12 h-12 rounded-xl flex items-center justify-center shadow-lg"
                             >
                                 <img
-                                    src="./atbu.png"
+                                    src="./subuddy.png"
                                     alt="DMSE"
                                     className="aspect-square w-8 rounded-l"
                                 />                        
                             </div>
                             <div>
-                                <h1 className="text-lg sm:text-xl font-bold text-white">Abubakar Tafawa Balewa University</h1>
-                                <p className="text-xs sm:text-sm text-gray-300">Electronic Voting System</p>
+                                <h1 className="text-lg sm:text-xl font-bold text-white">Subuddy</h1>
                             </div>
                         </div>
                         <div className="hidden sm:flex items-center space-x-2 text-gray-300">
-                            <Shield className="w-4 h-4" />
-                            <span className="text-sm font-medium">Secure Platform</span>
+                            <WalletMultiButton />
                         </div>
                     </div>
                 </div>
             </nav>
 
-
-            <main className='text-center py-6'>
-                <div className="flex justify-center my-12">
-                    <div className="relative">
-                        <div
-                            className="w-16 h-16 sm:w-24 sm:h-24 rounded-2xl flex items-center justify-center shadow-2xl transform hover:scale-110 transition-all duration-500"
-                            style={{ backgroundColor: '#1348a0' }}
-                        >
-                                <img
-                                    src="./dmse.png"
-                                    alt="DMSE"
-                                    className="aspect-square w-25 rounded-l"
-                                />
-                        </div>
-                        <div className="absolute -top-2 -right-2 w-6 h-6 sm:w-8 sm:h-8 bg-green-400 rounded-full flex items-center justify-center animate-bounce">
-                            <div className="w-3 h-3 bg-white rounded-full"></div>
-                        </div>
-                    </div>
-                </div>
-
-                <div className='my-9'>
-                    <h2 className="text-5xl sm:text-6xl font-black text-white leading-none tracking-tight drop-shadow-2xl">MECHATRONICS</h2>
-                    <p className="text-2xl sm:text-2xl md:text-3xl font-light text-gray-300 my-2">DEPARTMENT</p>
-                </div>
-                
-                <div className="flex items-center justify-center space-x-6">
-                    <div className="h-px bg-gradient-to-r from-transparent via-white/50 to-transparent w-32"></div>
-                    <div className="bg-white/10 backdrop-blur-sm px-8 py-2 sm:py-4 rounded-full border border-white/20 flex items-center">
-                    <span className="text-xl sm:text-2xl font-bold text-white">2025</span>
-                    <span className="text-lg sm:text-xl text-gray-300 ml-3">ELECTION</span>
-                    </div>
-                    <div className="h-px bg-gradient-to-r from-transparent via-white/50 to-transparent w-32"></div>
-                </div>
-
-                <div className="pt-12">
-                    <Button
-                        className="group px-12 py-6 text-lg font-semibold sm:font-bold text-white shadow-2xl hover:shadow-3xl transform hover:scale-105 transition-all duration-300 rounded-2xl border-0"
-                        style={{ backgroundColor: '#1348a0' }}
-                        onClick={()=> navigate('/voting-portal')}
-                    >
-                        <Lock className="w-6 h-6 mr-4 group-hover:rotate-12 transition-transform duration-300" />
-                            PROCEED TO VOTE
-                        <div className="w-2 h-2 bg-green-400 rounded-full ml-4 animate-pulse"></div>
-                    </Button>
-                </div>
-
-            </main>
-            
-            {/* Footer */}
-            <footer className="absolute bottom-0 z-10 w-full bg-white/5 backdrop-blur-sm border-t border-white/10 py-6">
-                <div className="max-w-7xl mx-auto px-6 text-center">
-                <p className="text-sm text-gray-400">
-                    © 2025 Abubakar Tafawa Balewa University - Mechatronics Department
-                </p>
-                </div>
-            </footer>
         </div>        
     </div>
 

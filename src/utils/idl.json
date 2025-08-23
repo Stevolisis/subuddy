@@ -1,0 +1,555 @@
+{
+  "address": "DeTyfcGvUY5nAnLbQA5SmqjVCNDWQt99tkoBAArjsuA3",
+  "metadata": {
+    "name": "sub_buddy",
+    "version": "0.1.0",
+    "spec": "0.1.0",
+    "description": "Created with Anchor"
+  },
+  "instructions": [
+    {
+      "name": "confirm_invite",
+      "discriminator": [
+        12,
+        71,
+        39,
+        127,
+        68,
+        194,
+        194,
+        156
+      ],
+      "accounts": [
+        {
+          "name": "joiner",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "subscription",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  115,
+                  117,
+                  98,
+                  115,
+                  99,
+                  114,
+                  105,
+                  112,
+                  116,
+                  105,
+                  111,
+                  110
+                ]
+              },
+              {
+                "kind": "arg",
+                "path": "creator"
+              },
+              {
+                "kind": "arg",
+                "path": "subscription_id"
+              }
+            ]
+          }
+        },
+        {
+          "name": "escrow",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  101,
+                  115,
+                  99,
+                  114,
+                  111,
+                  119
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "subscription"
+              }
+            ]
+          }
+        }
+      ],
+      "args": [
+        {
+          "name": "subscription_id",
+          "type": "u64"
+        },
+        {
+          "name": "creator",
+          "type": "pubkey"
+        }
+      ]
+    },
+    {
+      "name": "create_subscription",
+      "discriminator": [
+        65,
+        71,
+        10,
+        60,
+        249,
+        82,
+        197,
+        12
+      ],
+      "accounts": [
+        {
+          "name": "creator",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "subscription",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  115,
+                  117,
+                  98,
+                  115,
+                  99,
+                  114,
+                  105,
+                  112,
+                  116,
+                  105,
+                  111,
+                  110
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "creator"
+              },
+              {
+                "kind": "arg",
+                "path": "subscription_id"
+              }
+            ]
+          }
+        },
+        {
+          "name": "escrow",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  101,
+                  115,
+                  99,
+                  114,
+                  111,
+                  119
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "subscription"
+              }
+            ]
+          }
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "subscription_id",
+          "type": "u64"
+        },
+        {
+          "name": "creator_email",
+          "type": "string"
+        },
+        {
+          "name": "service_name",
+          "type": "string"
+        },
+        {
+          "name": "max_slots",
+          "type": "u8"
+        },
+        {
+          "name": "price_per_slot",
+          "type": "u64"
+        }
+      ]
+    },
+    {
+      "name": "creator_withdraw",
+      "discriminator": [
+        92,
+        117,
+        206,
+        254,
+        174,
+        108,
+        37,
+        106
+      ],
+      "accounts": [
+        {
+          "name": "creator",
+          "writable": true,
+          "signer": true,
+          "relations": [
+            "subscription"
+          ]
+        },
+        {
+          "name": "subscription",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  115,
+                  117,
+                  98,
+                  115,
+                  99,
+                  114,
+                  105,
+                  112,
+                  116,
+                  105,
+                  111,
+                  110
+                ]
+              },
+              {
+                "kind": "arg",
+                "path": "creator_pubkey"
+              },
+              {
+                "kind": "arg",
+                "path": "subscription_id"
+              }
+            ]
+          }
+        },
+        {
+          "name": "escrow",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  101,
+                  115,
+                  99,
+                  114,
+                  111,
+                  119
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "subscription"
+              }
+            ]
+          }
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "subscription_id",
+          "type": "u64"
+        },
+        {
+          "name": "creator_pubkey",
+          "type": "pubkey"
+        }
+      ]
+    },
+    {
+      "name": "join_subscription",
+      "discriminator": [
+        128,
+        157,
+        149,
+        66,
+        22,
+        152,
+        193,
+        141
+      ],
+      "accounts": [
+        {
+          "name": "joiner",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "subscription",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  115,
+                  117,
+                  98,
+                  115,
+                  99,
+                  114,
+                  105,
+                  112,
+                  116,
+                  105,
+                  111,
+                  110
+                ]
+              },
+              {
+                "kind": "arg",
+                "path": "creator"
+              },
+              {
+                "kind": "arg",
+                "path": "subscription_id"
+              }
+            ]
+          }
+        },
+        {
+          "name": "escrow",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  101,
+                  115,
+                  99,
+                  114,
+                  111,
+                  119
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "subscription"
+              }
+            ]
+          }
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "subscription_id",
+          "type": "u64"
+        },
+        {
+          "name": "creator",
+          "type": "pubkey"
+        },
+        {
+          "name": "email",
+          "type": "string"
+        }
+      ]
+    }
+  ],
+  "accounts": [
+    {
+      "name": "EscrowVault",
+      "discriminator": [
+        54,
+        84,
+        41,
+        149,
+        160,
+        181,
+        85,
+        114
+      ]
+    },
+    {
+      "name": "Subscription",
+      "discriminator": [
+        64,
+        7,
+        26,
+        135,
+        102,
+        132,
+        98,
+        33
+      ]
+    }
+  ],
+  "errors": [
+    {
+      "code": 6000,
+      "name": "InvalidMaxSlots",
+      "msg": "Max slot must be greater than 0"
+    },
+    {
+      "code": 6001,
+      "name": "NotOpen",
+      "msg": "Subscription is not open"
+    },
+    {
+      "code": 6002,
+      "name": "PoolFull",
+      "msg": "Subscription is already full"
+    },
+    {
+      "code": 6003,
+      "name": "AlreadyJoined",
+      "msg": "You have already joined this subscription"
+    },
+    {
+      "code": 6004,
+      "name": "NotJoined",
+      "msg": "You have not joined this subscription"
+    },
+    {
+      "code": 6005,
+      "name": "AlreadyConfirmed",
+      "msg": "You have already confirmed this invite"
+    },
+    {
+      "code": 6006,
+      "name": "NotConfirmed",
+      "msg": "Subscribers have not confirmed yet"
+    },
+    {
+      "code": 6007,
+      "name": "InvalidCreator",
+      "msg": "Invalid creator for this subscription"
+    },
+    {
+      "code": 6008,
+      "name": "MathOverflow",
+      "msg": "Math overflow occurred during calculation"
+    },
+    {
+      "code": 6009,
+      "name": "InsufficientFunds",
+      "msg": "Insufficient funds in escrow"
+    },
+    {
+      "code": 6010,
+      "name": "InvalidSeeds",
+      "msg": "Invalid PDA seeds"
+    }
+  ],
+  "types": [
+    {
+      "name": "EscrowVault",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "bump",
+            "type": "u8"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Joiner",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "joiner",
+            "type": "pubkey"
+          },
+          {
+            "name": "email",
+            "type": "string"
+          },
+          {
+            "name": "confirmed",
+            "type": "bool"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Subscription",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "subscription_id",
+            "type": "u64"
+          },
+          {
+            "name": "creator",
+            "type": "pubkey"
+          },
+          {
+            "name": "creator_email",
+            "type": "string"
+          },
+          {
+            "name": "service_name",
+            "type": "string"
+          },
+          {
+            "name": "max_slots",
+            "type": "u8"
+          },
+          {
+            "name": "price_per_slot",
+            "type": "u64"
+          },
+          {
+            "name": "filled_slots",
+            "type": "u8"
+          },
+          {
+            "name": "joiners",
+            "type": {
+              "vec": {
+                "defined": {
+                  "name": "Joiner"
+                }
+              }
+            }
+          },
+          {
+            "name": "status",
+            "type": "u8"
+          }
+        ]
+      }
+    }
+  ]
+}
