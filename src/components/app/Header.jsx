@@ -20,7 +20,7 @@ import { Link } from 'react-router-dom'
               <h1 className="text-lg sm:text-xl font-bold text-white">Subuddy</h1>
             </div>
           </Link>
-          <div className="hidden sm:flex items-center space-x-2 text-zinc-300">
+          <div className="flex items-center space-x-2 text-zinc-300">
             <WalletMultiButton />
           </div>
         </div>
