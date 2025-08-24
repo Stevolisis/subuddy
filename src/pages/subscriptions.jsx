@@ -13,7 +13,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Separator } from '@/components/ui/separator';
-import { Search, Filter, Users, DollarSign, Clock, Star, Plus, Eye, Trash2, Edit, CheckCircle, XCircle, User, CreditCard, Calendar } from 'lucide-react';
+import { Search, Filter, Users, DollarSign, Clock, Star, Plus, Eye, Trash2, Edit, CheckCircle, XCircle, User, CreditCard, Calendar, Download } from 'lucide-react';
 import {
   Dialog,
   DialogContent,
@@ -34,9 +34,90 @@ const Subscriptions = () => {
   const [selectedService, setSelectedService] = useState('');
   const [slots, setSlots] = useState(1);
   const [activeTab, setActiveTab] = useState('browse');
-  const [userCreatedSubscriptions, setUserCreatedSubscriptions] = useState([]);
-  const [userJoinedSubscriptions, setUserJoinedSubscriptions] = useState([]);
   const [mySubscriptionsTab, setMySubscriptionsTab] = useState('created');
+
+  // Dummy data for user created subscriptions with proper functionality
+  const [userCreatedSubscriptions, setUserCreatedSubscriptions] = useState([
+    {
+      id: 1001,
+      service: 'YouTube Premium',
+      image: 'https://upload.wikimedia.org/wikipedia/commons/0/09/YouTube_full-color_icon_%282017%29.svg',
+      email: 'creator@example.com',
+      pricePerSlot: 2.99,
+      totalSlots: 5,
+      remainingSlots: 1,
+      createdDate: '2023-10-15',
+      status: 'Active',
+      joinedUsers: [
+        { id: 1, email: 'user1@example.com', walletAddress: '5Hs6...8JkL', joinedDate: '2023-10-16', status: 'Verified' },
+        { id: 2, email: 'user2@example.com', walletAddress: '7Gh3...2MnB', joinedDate: '2023-10-17', status: 'Verified' },
+        { id: 3, email: 'user3@example.com', walletAddress: '9Kj8...1PqR', joinedDate: '2023-10-18', status: 'Verified' },
+        { id: 4, email: 'user4@example.com', walletAddress: '2Fg7...5LmN', joinedDate: '2023-10-19', status: 'Pending' }
+      ],
+      filledSlots: 4,
+      totalRevenue: 8.97, // 3 verified users * $2.99
+      needsWithdrawal: true,
+      invitesSent: 2,
+      invitesAccepted: 3
+    },
+    {
+      id: 1002,
+      service: 'Google One',
+      image: 'https://upload.wikimedia.org/wikipedia/commons/c/c8/Google_One_logo.svg',
+      email: 'creator@example.com',
+      pricePerSlot: 1.99,
+      totalSlots: 4,
+      remainingSlots: 2,
+      createdDate: '2023-10-10',
+      status: 'Active',
+      joinedUsers: [
+        { id: 1, email: 'user5@example.com', walletAddress: '3Rt9...0OpQ', joinedDate: '2023-10-11', status: 'Verified' }
+      ],
+      filledSlots: 2, // Including creator
+      totalRevenue: 1.99, // 1 verified user * $1.99
+      needsWithdrawal: false,
+      invitesSent: 3,
+      invitesAccepted: 1
+    }
+  ]);
+
+  // Dummy data for subscriptions user has joined
+  const [userJoinedSubscriptions, setUserJoinedSubscriptions] = useState([
+    {
+      id: 2001,
+      service: 'YouTube Music Premium',
+      image: 'https://upload.wikimedia.org/wikipedia/commons/6/6a/Youtube_Music_icon.svg',
+      price: 9.99,
+      totalSlots: 6,
+      joinedDate: '2023-10-15',
+      status: 'Active',
+      creator: '0xAb5...7Fg2',
+      creatorWallet: '0xAb5...7Fg2',
+      filledSlots: 4,
+      needsConfirmation: false,
+      yourSlot: 3,
+      yourStatus: 'Verified',
+      yourPrice: 1.66, // $9.99 / 6 slots
+      paymentReleased: true
+    },
+    {
+      id: 2002,
+      service: 'Google Workspace',
+      image: 'https://upload.wikimedia.org/wikipedia/commons/5/5f/Google_Workspace_Logo.svg',
+      price: 12.00,
+      totalSlots: 3,
+      joinedDate: '2023-10-18',
+      status: 'Pending',
+      creator: '0xCde...9Hi3',
+      creatorWallet: '0xCde...9Hi3',
+      filledSlots: 3,
+      needsConfirmation: true,
+      yourSlot: 2,
+      yourStatus: 'Pending',
+      yourPrice: 4.00, // $12.00 / 3 slots
+      paymentReleased: false
+    }
+  ]);
 
   const subscriptions = [
     {
@@ -161,41 +242,6 @@ const Subscriptions = () => {
     "Google Stadia Pro"
   ];
 
-  // Sample data for users who joined subscriptions
-  const sampleJoinedUsers = [
-    { id: 1, email: 'user1@example.com', walletAddress: '5Hs6...8JkL', joinedDate: '2023-10-15', status: 'Pending' },
-    { id: 2, email: 'user2@example.com', walletAddress: '7Gh3...2MnB', joinedDate: '2023-10-16', status: 'Verified' },
-    { id: 3, email: 'user3@example.com', walletAddress: '9Kj8...1PqR', joinedDate: '2023-10-17', status: 'Pending' }
-  ];
-
-  // Sample data for joined subscriptions
-  const sampleJoinedSubscriptions = [
-    {
-      id: 101,
-      service: 'YouTube Premium',
-      image: 'https://upload.wikimedia.org/wikipedia/commons/0/09/YouTube_full-color_icon_%282017%29.svg',
-      price: 11.99,
-      totalSlots: 6,
-      joinedDate: '2023-10-15',
-      status: 'Active',
-      creator: '0xAb5...7Fg2',
-      filledSlots: 4,
-      needsConfirmation: false
-    },
-    {
-      id: 102,
-      service: 'Google One',
-      image: 'https://upload.wikimedia.org/wikipedia/commons/c/c8/Google_One_logo.svg',
-      price: 1.99,
-      totalSlots: 5,
-      joinedDate: '2023-10-18',
-      status: 'Pending',
-      creator: '0xCde...9Hi3',
-      filledSlots: 5,
-      needsConfirmation: true
-    }
-  ];
-
   const filteredSubscriptions = subscriptions.filter(sub => {
     const matchesSearch = sub.service.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          sub.category.toLowerCase().includes(searchTerm.toLowerCase());
@@ -235,8 +281,10 @@ const Subscriptions = () => {
         status: 'Verified'
       }],
       filledSlots: 1,
-      totalRevenue: parseFloat(pricePerSlot) * (parseInt(slots) - 1),
-      needsWithdrawal: false
+      totalRevenue: 0,
+      needsWithdrawal: false,
+      invitesSent: 0,
+      invitesAccepted: 0
     };
 
     setUserCreatedSubscriptions([...userCreatedSubscriptions, newSubscription]);
@@ -264,9 +312,16 @@ const Subscriptions = () => {
 
   const handleConfirmSubscription = (id) => {
     setUserJoinedSubscriptions(userJoinedSubscriptions.map(sub => 
-      sub.id === id ? { ...sub, needsConfirmation: false, status: 'Active' } : sub
+      sub.id === id ? { ...sub, needsConfirmation: false, status: 'Active', paymentReleased: true } : sub
     ));
     alert('Subscription confirmed! Funds released to creator.');
+  };
+
+  const handleSendInvites = (id) => {
+    setUserCreatedSubscriptions(userCreatedSubscriptions.map(sub => 
+      sub.id === id ? { ...sub, invitesSent: sub.invitesSent + 1 } : sub
+    ));
+    alert('Invite sent successfully!');
   };
 
   return (
@@ -800,22 +855,32 @@ const Subscriptions = () => {
                             <Card key={subscription.id} className="bg-zinc-700 border-zinc-600">
                               <CardContent className="p-6">
                                 <div className="flex justify-between items-start mb-4">
-                                  <div>
-                                    <h3 className="text-white font-semibold text-xl flex items-center gap-2">
-                                      {subscription.service}
-                                      <Badge 
-                                        className="ml-2"
-                                        style={{ 
-                                          backgroundColor: subscription.status === 'Active' ? '#10b981' : '#ef4444',
-                                          color: 'white'
+                                  <div className="flex items-center gap-3">
+                                    <div className="w-12 h-12 bg-white rounded-lg p-2 flex items-center justify-center">
+                                      <img
+                                        src={subscription.image}
+                                        alt={subscription.service}
+                                        className="w-8 h-8 object-contain"
+                                        onError={(e) => {
+                                          e.target.style.display = 'none';
                                         }}
-                                      >
-                                        {subscription.status}
-                                      </Badge>
-                                    </h3>
-                                    <p className="text-zinc-400 text-sm mt-1">Created: {subscription.createdDate}</p>
+                                      />
+                                    </div>
+                                    <div>
+                                      <h3 className="text-white font-semibold text-xl">{subscription.service}</h3>
+                                      <p className="text-zinc-400 text-sm">Created: {subscription.createdDate}</p>
+                                    </div>
                                   </div>
                                   <div className="flex gap-2">
+                                    <Button 
+                                      size="sm" 
+                                      variant="outline"
+                                      className="text-zinc-300 border-zinc-600 hover:bg-zinc-600"
+                                      onClick={() => handleSendInvites(subscription.id)}
+                                    >
+                                      <User className="w-4 h-4 mr-1" />
+                                      Send Invites ({subscription.invitesSent})
+                                    </Button>
                                     <Button 
                                       size="sm" 
                                       variant="outline"
@@ -835,7 +900,7 @@ const Subscriptions = () => {
                                   </div>
                                 </div>
 
-                                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                                <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
                                   <div className="flex items-center gap-2">
                                     <DollarSign className="w-5 h-5 text-yellow-400" />
                                     <div>
@@ -854,7 +919,14 @@ const Subscriptions = () => {
                                     <CreditCard className="w-5 h-5 text-yellow-400" />
                                     <div>
                                       <p className="text-zinc-400 text-sm">Total revenue</p>
-                                      <p className="text-white font-medium">${subscription.totalRevenue}</p>
+                                      <p className="text-white font-medium">${subscription.totalRevenue.toFixed(2)}</p>
+                                    </div>
+                                  </div>
+                                  <div className="flex items-center gap-2">
+                                    <CheckCircle className="w-5 h-5 text-yellow-400" />
+                                    <div>
+                                      <p className="text-zinc-400 text-sm">Invites accepted</p>
+                                      <p className="text-white font-medium">{subscription.invitesAccepted}</p>
                                     </div>
                                   </div>
                                 </div>
@@ -874,10 +946,11 @@ const Subscriptions = () => {
                                             <div>
                                               <p className="text-white text-sm">{user.email}</p>
                                               <p className="text-zinc-400 text-xs">{user.walletAddress}</p>
+                                              <p className="text-zinc-400 text-xs">Joined: {user.joinedDate}</p>
                                             </div>
                                             <Badge 
                                               variant={user.status === 'Verified' ? "default" : "secondary"}
-                                              className={user.status === 'Verified' ? "bg-green-500" : "bg-zinc-600"}
+                                              className={user.status === 'Verified' ? "bg-green-500" : "bg-yellow-500"}
                                             >
                                               {user.status}
                                             </Badge>
@@ -893,7 +966,7 @@ const Subscriptions = () => {
                                 {subscription.filledSlots === subscription.totalSlots && subscription.needsWithdrawal && (
                                   <div className="bg-yellow-900/20 border border-yellow-700 rounded-lg p-4 mb-4">
                                     <div className="flex items-center gap-2 mb-2">
-                                      <CreditCard className="w-5 h-5 text-yellow-400" />
+                                      <Download className="w-5 h-5 text-yellow-400" />
                                       <h4 className="text-yellow-400 font-medium">Withdraw Funds</h4>
                                     </div>
                                     <p className="text-zinc-300 text-sm mb-3">
@@ -903,7 +976,7 @@ const Subscriptions = () => {
                                       onClick={() => handleWithdrawFunds(subscription.id)}
                                       className="bg-yellow-600 hover:bg-yellow-700 text-white"
                                     >
-                                      Withdraw ${subscription.totalRevenue}
+                                      Withdraw ${subscription.totalRevenue.toFixed(2)}
                                     </Button>
                                   </div>
                                 )}
@@ -925,7 +998,7 @@ const Subscriptions = () => {
 
                     {/* Joined Subscriptions Tab */}
                     <TabsContent value="joined" className="mt-6">
-                      {sampleJoinedSubscriptions.length === 0 ? (
+                      {userJoinedSubscriptions.length === 0 ? (
                         <div className="text-center py-8">
                           <div className="mx-auto w-16 h-16 bg-zinc-700 rounded-full flex items-center justify-center mb-4">
                             <Users className="w-8 h-8 text-zinc-400" />
@@ -935,7 +1008,7 @@ const Subscriptions = () => {
                         </div>
                       ) : (
                         <div className="space-y-6">
-                          {sampleJoinedSubscriptions.map((subscription) => (
+                          {userJoinedSubscriptions.map((subscription) => (
                             <Card key={subscription.id} className="bg-zinc-700 border-zinc-600">
                               <CardContent className="p-6">
                                 <div className="flex items-start justify-between mb-4">
@@ -953,6 +1026,7 @@ const Subscriptions = () => {
                                     <div>
                                       <h3 className="text-white font-semibold text-xl">{subscription.service}</h3>
                                       <p className="text-zinc-400 text-sm">Joined: {subscription.joinedDate}</p>
+                                      <p className="text-zinc-400 text-sm">Creator: {subscription.creator}</p>
                                     </div>
                                   </div>
                                   <Badge 
@@ -967,12 +1041,12 @@ const Subscriptions = () => {
                                   </Badge>
                                 </div>
 
-                                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                                <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
                                   <div className="flex items-center gap-2">
                                     <DollarSign className="w-5 h-5 text-yellow-400" />
                                     <div>
-                                      <p className="text-zinc-400 text-sm">Price per month</p>
-                                      <p className="text-white font-medium">${subscription.price}</p>
+                                      <p className="text-zinc-400 text-sm">Your monthly price</p>
+                                      <p className="text-white font-medium">${subscription.yourPrice.toFixed(2)}</p>
                                     </div>
                                   </div>
                                   <div className="flex items-center gap-2">
@@ -985,8 +1059,15 @@ const Subscriptions = () => {
                                   <div className="flex items-center gap-2">
                                     <User className="w-5 h-5 text-yellow-400" />
                                     <div>
-                                      <p className="text-zinc-400 text-sm">Creator</p>
-                                      <p className="text-white font-medium text-sm">{subscription.creator}</p>
+                                      <p className="text-zinc-400 text-sm">Your slot</p>
+                                      <p className="text-white font-medium">#{subscription.yourSlot}</p>
+                                    </div>
+                                  </div>
+                                  <div className="flex items-center gap-2">
+                                    <CreditCard className="w-5 h-5 text-yellow-400" />
+                                    <div>
+                                      <p className="text-zinc-400 text-sm">Payment status</p>
+                                      <p className="text-white font-medium">{subscription.paymentReleased ? 'Released' : 'Held'}</p>
                                     </div>
                                   </div>
                                 </div>
