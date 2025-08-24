@@ -164,7 +164,6 @@ const Subscriptions = () => {
       // decode accounts into proper objects
       const subscriptions = accounts.map((acc) => {
         const data = program.coder.accounts.decode("subscription", acc.account.data);
-        console.log("decoded subscription account:", data);
         const pricePerSlotInLamports = data.pricePerSlot.toNumber();
         const pricePerSlotInSol = pricePerSlotInLamports / 1e9;
 
@@ -195,7 +194,6 @@ const Subscriptions = () => {
         sub.joiners.some((joiner) => joiner.wallet === wallet.publicKey.toBase58())
       );
 
-      console.log("fetched subscriptions: ", subscriptions);
       console.log("userCreatedSubscriptions: ", userCreatedSubscriptions);
       console.log("userJoinedSubscriptions: ", userJoinedSubscriptions);
       setOnchainSubscriptions(subscriptions);
@@ -210,9 +208,9 @@ const Subscriptions = () => {
     }
   };
 
-useEffect(() => {
-    fetchSubscriptions();
-}, [wallet]);
+  useEffect(() => {
+      fetchSubscriptions();
+  }, [wallet]);
 
   return (
     <div className="bg-zinc-900">
@@ -325,7 +323,7 @@ useEffect(() => {
               {/* Subscriptions Grid */}
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-8">
                 {filteredSubscriptions.map((subscription, i) => (
-                  <SubscriptionCard subscription={subscription} services={services} key={i} />
+                  <SubscriptionCard fetchSubscriptions={fetchSubscriptions} subscription={subscription} services={services} key={i} />
                 ))}
               </div>
 

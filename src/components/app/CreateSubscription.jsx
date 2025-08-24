@@ -22,7 +22,6 @@ const CreateSubscription = ({fetchSubscriptions,setActiveTab}) => {
     const wallet = useAnchorWallet();
     const { connected } = useAnchorWallet() || { connected: false };
 
-      
     const googleServices = [
         "Google One",
         "Google One Premium",

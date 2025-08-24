@@ -25,7 +25,7 @@ const CreateSubscriptionCard = ({subscription, services}) => {
             </div>
             <div>
               <h3 className="text-white font-semibold text-xl">{subscription.service}</h3>
-              <p className="text-zinc-400 text-sm">Created: {subscription.createdDate}</p>
+              <p className="text-zinc-400 text-sm">{services[subscription.service].description}</p>
             </div>
           </div>
           { subscription.joiners.length === subscription.totalSlots &&
@@ -33,7 +33,7 @@ const CreateSubscriptionCard = ({subscription, services}) => {
               <Button
                 size="sm" 
                 variant="outline"
-                className="text-zinc-300 bg-orange-700 hover:bg-zinc-600 hover:text-white"
+                className="text-zinc-300 bg-blue-700 hover:bg-zinc-600 hover:text-white"
               >
                 <Bell className="w-4 h-4 mr-1" />
                 Send Invites
@@ -83,20 +83,20 @@ const CreateSubscriptionCard = ({subscription, services}) => {
             Users who joined:
           </h4>
           <div className="bg-zinc-800 rounded-lg p-3">
-            {subscription.joinedUsers && subscription.joinedUsers.length > 0 ? (
+            {subscription.joiners && subscription.joiners.length > 0 ? (
               <div className="space-y-3">
-                {subscription.joinedUsers.map((user) => (
+                {subscription.joiners.map((user) => (
                   <div key={user.id} className="flex justify-between items-center p-2 bg-zinc-700 rounded">
                     <div>
                       <p className="text-white text-sm">{user.email}</p>
-                      <p className="text-zinc-400 text-xs">{user.wallet}</p>
+                      <p className="text-zinc-400 text-xs">{user.wallet.slice(0,9)}...{user.wallet.slice(35,44)}</p>
                       <p className="text-zinc-400 text-xs">Confirmed: {user.confirmed ? "True" : "Pending..."}</p>
                     </div>
                     <Badge
-                      variant={user.status === 'Verified' ? "default" : "secondary"}
-                      className={user.status === 'Verified' ? "bg-green-500" : "bg-yellow-500"}
+                      variant={user.confirmed ? "default" : "secondary"}
+                      className={user.confirmed ? "bg-green-500" : "bg-yellow-500"}
                     >
-                      {user.status}
+                      {user.confirmed ? "Confirmed" : "Not Confirmed"}
                     </Badge>
                   </div>
                 ))}

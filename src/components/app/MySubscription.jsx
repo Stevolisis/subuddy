@@ -1,53 +1,20 @@
 import React, { useState } from 'react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui/card';
-import { Eye, Users } from 'lucide-react';
+import { Eye, Plus, Users } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs';
 import CreateSubscriptionCard from './CreateSubscriptionCard';
 import JoinedSubscriptionCard from './JoinedSubscriptionCard';
 
 
 const MySubscription = ({
+  userJoinedSubscriptions,
+  setUserJoinedSubscriptions,
   userCreatedSubscriptions, 
   setUserCreatedSubscriptions,
   services
 }) => {
   const [mySubscriptionsTab, setMySubscriptionsTab] = useState('created');
-  const [userJoinedSubscriptions, setUserJoinedSubscriptions] = useState([
-    {
-      id: 2001,
-      service: 'YouTube Music Premium',
-      image: 'https://upload.wikimedia.org/wikipedia/commons/6/6a/Youtube_Music_icon.svg',
-      price: 9.99,
-      totalSlots: 6,
-      joinedDate: '2023-10-15',
-      status: 'Active',
-      creator: '0xAb5...7Fg2',
-      creatorWallet: '0xAb5...7Fg2',
-      filledSlots: 4,
-      needsConfirmation: false,
-      yourSlot: 3,
-      yourStatus: 'Verified',
-      yourPrice: 1.66, // $9.99 / 6 slots
-      paymentReleased: true
-    },
-    {
-      id: 2002,
-      service: 'Google Workspace',
-      image: 'https://upload.wikimedia.org/wikipedia/commons/5/5f/Google_Workspace_Logo.svg',
-      price: 12.00,
-      totalSlots: 3,
-      joinedDate: '2023-10-18',
-      status: 'Pending',
-      creator: '0xCde...9Hi3',
-      creatorWallet: '0xCde...9Hi3',
-      filledSlots: 3,
-      needsConfirmation: true,
-      yourSlot: 2,
-      yourStatus: 'Pending',
-      yourPrice: 4.00, // $12.00 / 3 slots
-      paymentReleased: false
-    }
-  ]);
+
 
   return (
     <Card className="bg-zinc-800 border-zinc-700 mb-8">
