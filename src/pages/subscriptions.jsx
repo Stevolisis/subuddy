@@ -27,50 +27,8 @@ const Subscriptions = () => {
   const wallet = useAnchorWallet();
   const [activeTab, setActiveTab] = useState('browse');
   const [onchainSubscriptions, setOnchainSubscriptions] = useState([]);
-  const [userCreatedSubscriptions, setUserCreatedSubscriptions] = useState([
-    {
-      id: 1001,
-      service: 'YouTube Premium',
-      image: 'https://upload.wikimedia.org/wikipedia/commons/0/09/YouTube_full-color_icon_%282017%29.svg',
-      email: 'creator@example.com',
-      pricePerSlot: 2.99,
-      totalSlots: 5,
-      remainingSlots: 1,
-      createdDate: '2023-10-15',
-      status: 'Active',
-      joinedUsers: [
-        { id: 1, email: 'user1@example.com', walletAddress: '5Hs6...8JkL', joinedDate: '2023-10-16', status: 'Verified' },
-        { id: 2, email: 'user2@example.com', walletAddress: '7Gh3...2MnB', joinedDate: '2023-10-17', status: 'Verified' },
-        { id: 3, email: 'user3@example.com', walletAddress: '9Kj8...1PqR', joinedDate: '2023-10-18', status: 'Verified' },
-        { id: 4, email: 'user4@example.com', walletAddress: '2Fg7...5LmN', joinedDate: '2023-10-19', status: 'Pending' }
-      ],
-      filledSlots: 4,
-      totalRevenue: 8.97, // 3 verified users * $2.99
-      needsWithdrawal: true,
-      invitesSent: 2,
-      invitesAccepted: 3
-    },
-    {
-      id: 1002,
-      service: 'Google One',
-      image: 'https://upload.wikimedia.org/wikipedia/commons/c/c8/Google_One_logo.svg',
-      email: 'creator@example.com',
-      pricePerSlot: 1.99,
-      totalSlots: 4,
-      remainingSlots: 2,
-      createdDate: '2023-10-10',
-      status: 'Active',
-      joinedUsers: [
-        { id: 1, email: 'user5@example.com', walletAddress: '3Rt9...0OpQ', joinedDate: '2023-10-11', status: 'Verified' }
-      ],
-      filledSlots: 2, // Including creator
-      totalRevenue: 1.99, // 1 verified user * $1.99
-      needsWithdrawal: false,
-      invitesSent: 3,
-      invitesAccepted: 1
-    }
-  ]);
-
+  const [userCreatedSubscriptions, setUserCreatedSubscriptions] = useState([]);
+  const [userJoinedSubscriptions, setUserJoinedSubscriptions] = useState([]);
 
   const filteredSubscriptions = onchainSubscriptions.filter(sub => {
     const matchesSearch = sub.service.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -88,73 +46,172 @@ const Subscriptions = () => {
 
   const categories = ['All', 'Cloud Storage', 'Entertainment', 'Music', 'Productivity', 'Gaming', 'Smart Home'];
 
-const fetchSubscriptions = async () => {
-  const id = toast.loading("fetching subscriptions ...")
-  console.log("wallet: ", wallet);
-  if (!wallet) {
-    return toast.info("Please connect your wallet!", {id})
+  const services = {
+    ['Google One']:{
+      id: 1,
+      service: 'Google One',
+      image: 'https://upload.wikimedia.org/wikipedia/commons/c/c8/Google_One_logo.svg',
+      category: 'Cloud Storage',
+      price: 1.99,
+      totalSlots: 5,
+      remainingSlots: 2,
+      rating: 4.5,
+      description: '100GB cloud storage with Google services',
+      features: ['100GB storage', 'Google support', 'Family sharing', 'Photo editing']
+    },
+    ['Google One Premium']:{
+      id: 2,
+      service: 'Google One Premium',
+      image: 'https://upload.wikimedia.org/wikipedia/commons/c/c8/Google_One_logo.svg',
+      category: 'Cloud Storage',
+      price: 9.99,
+      totalSlots: 5,
+      remainingSlots: 3,
+      rating: 4.6,
+      description: '2TB cloud storage with premium features',
+      features: ['2TB storage', 'Premium support', 'VPN access', 'Advanced photo features']
+    },
+    ['YouTube Premium']:{
+      id: 3,
+      service: 'YouTube Premium',
+      image: 'https://upload.wikimedia.org/wikipedia/commons/0/09/YouTube_full-color_icon_%282017%29.svg',
+      category: 'Entertainment',
+      rating: 4.8,
+      description: 'Ad-free YouTube, YouTube Music, and offline downloads',
+      features: ['Ad-free videos', 'Background play', 'YouTube Music', 'Offline downloads']
+    },
+    ['YouTube Music Premium']:{
+      id: 4,
+      service: 'YouTube Music Premium',
+      image: 'https://upload.wikimedia.org/wikipedia/commons/6/6a/Youtube_Music_icon.svg',
+      category: 'Music',
+      rating: 4.4,
+      description: 'Ad-free music streaming with offline listening',
+      features: ['Ad-free music', 'Background play', 'Offline downloads', 'High quality audio']
+    },
+    ['Google Workspace']:{
+      id: 5,
+      service: 'Google Workspace',
+      image: 'https://upload.wikimedia.org/wikipedia/commons/5/5f/Google_Workspace_Logo.svg',
+      category: 'Productivity',
+      rating: 4.7,
+      description: 'Professional email and productivity tools',
+      features: ['Custom email domain', 'Google Drive', 'Meet & Calendar', '30GB storage']
+    },
+    ['Google Workspace Standard']:{
+      id: 6,
+      service: 'Google Workspace Standard',
+      image: 'https://upload.wikimedia.org/wikipedia/commons/5/5f/Google_Workspace_Logo.svg',
+      category: 'Productivity',
+      rating: 4.8,
+      description: 'Enhanced productivity with 2TB storage per user',
+      features: ['Custom email', '2TB storage', 'Advanced Meet', 'Security controls']
+    },
+    ['Google Play Pass']:{
+      id: 7,
+      service: 'Google Play Pass',
+      image: 'https://upload.wikimedia.org/wikipedia/commons/d/d0/Google_Play_Arrow_logo.svg',
+      category: 'Gaming',
+      rating: 4.2,
+      description: 'Access to premium apps and games without ads',
+      features: ['Premium apps', 'No ads', 'In-app purchases', '1000+ games & apps']
+    },
+    ['Google Nest Aware']:{
+      id: 8,
+      service: 'Google Nest Aware',
+      image: 'https://upload.wikimedia.org/wikipedia/commons/4/4a/Logo_2013_Google.png',
+      category: 'Smart Home',
+      rating: 4.3,
+      description: 'Smart home security with video history',
+      features: ['Video history', 'Intelligent alerts', 'Activity zones', 'Familiar face alerts']
+    },
+    ["Google Stadia Pro"]:{
+      id: 9,
+      service: 'Google Stadia Pro',
+      image: 'https://upload.wikimedia.org/wikipedia/commons/4/4a/Logo_2013_Google.png',
+      category: 'Gaming',
+      rating: 4.3,
+      description: 'Cloud gaming with premium features',
+      features: ['4K gaming', 'Free monthly games', 'Exclusive discounts', 'HDR support']
+    }
+  };
+  
+  const fetchSubscriptions = async () => {
+    const id = toast.loading("fetching subscriptions ...")
+
+    if (!wallet) {
+      return toast.info("Please connect your wallet!", {id})
+    };
+
+    try {
+      const program = getProgram(wallet);
+
+      // discriminator filter for Subscription
+      const accounts = await program.provider.connection.getProgramAccounts(program.programId, {
+        filters: [
+          {
+            memcmp: {
+              offset: 0,
+              bytes: utils.bytes.bs58.encode(
+                program.coder.accounts.accountDiscriminator("subscription")
+              ),
+            },
+          },
+        ],
+      });
+
+
+      // decode accounts into proper objects
+      const subscriptions = accounts.map((acc) => {
+        const data = program.coder.accounts.decode("subscription", acc.account.data);
+        console.log("decoded subscription account:", data);
+        const pricePerSlotInLamports = data.pricePerSlot.toNumber();
+        const pricePerSlotInSol = pricePerSlotInLamports / 1e9;
+
+        return {
+          pubkey: acc.pubkey.toBase58(),
+          id: Number(data.subscriptionId), // u64 → number
+          service: data.serviceName,
+          email: data.creatorEmail,
+          creator: data.creator.toBase58(),
+          pricePerSlot: parseFloat(pricePerSlotInSol.toFixed(6)),
+          totalSlots: data.maxSlots,
+          filledSlots: data.filledSlots,
+          remainingSlots: data.maxSlots - data.filledSlots,
+          status: data.status,
+          joiners: data.joiners.map((j) => ({
+            email: j.email,
+            wallet: j.joiner.toBase58(),
+            confirmed: j.confirmed,
+          })),
+          invitesAccepted: data.joiners.filter((j) => j.confirmed).length,
+        };
+      });
+
+      const userCreatedSubscriptions = subscriptions.filter(
+          (sub) => sub.creator === wallet.publicKey.toBase58()
+      );
+      const userJoinedSubscriptions = subscriptions.filter((sub) =>
+        sub.joiners.some((joiner) => joiner.wallet === wallet.publicKey.toBase58())
+      );
+
+      console.log("fetched subscriptions: ", subscriptions);
+      console.log("userCreatedSubscriptions: ", userCreatedSubscriptions);
+      console.log("userJoinedSubscriptions: ", userJoinedSubscriptions);
+      setOnchainSubscriptions(subscriptions);
+      setUserCreatedSubscriptions(userCreatedSubscriptions);
+      setUserJoinedSubscriptions(userJoinedSubscriptions);
+
+      return toast.success("fetched successfully", {id})
+
+    } catch (err) {
+      console.error("Failed to fetch subscriptions:", err);
+      return toast.error("Failed to fetch subscription, try again!!", {id});
+    }
   };
 
-  try {
-    const program = getProgram(wallet);
-    console.log("program: ", program);
-
-    // discriminator filter for Subscription
-    const accounts = await program.provider.connection.getProgramAccounts(program.programId, {
-      filters: [
-        {
-          memcmp: {
-            offset: 0,
-            bytes: utils.bytes.bs58.encode(
-              program.coder.accounts.accountDiscriminator("subscription")
-            ),
-          },
-        },
-      ],
-    });
-
-    console.log("raw subscription accounts:", accounts);
-
-    // decode accounts into proper objects
-    const subscriptions = accounts.map((acc) => {
-      const data = program.coder.accounts.decode("subscription", acc.account.data);
-      console.log("decoded subscription account:", data);
-      const pricePerSlotInLamports = data.pricePerSlot.toNumber();
-      const pricePerSlotInSol = pricePerSlotInLamports / 1e9;
-
-      return {
-        pubkey: acc.pubkey.toBase58(),
-        id: Number(data.subscriptionId), // u64 → number
-        service: data.serviceName,
-        email: data.creatorEmail,
-        creator: data.creator.toBase58(),
-        pricePerSlot: parseFloat(pricePerSlotInSol.toFixed(6)),
-        totalSlots: data.maxSlots,
-        filledSlots: data.filledSlots,
-        remainingSlots: data.maxSlots - data.filledSlots,
-        status: data.status,
-        joiners: data.joiners.map((j) => ({
-          email: j.email,
-          wallet: j.joiner.toBase58(),
-          confirmed: j.confirmed,
-        })),
-      };
-    });
-
-    console.log("fetched subscriptions: ", subscriptions);
-    setOnchainSubscriptions(subscriptions);
-    return toast.success("fetched successfully", {id})
-
-  } catch (err) {
-    console.error("Failed to fetch subscriptions:", err);
-    return toast.error("Failed to fetch subscription, try again!!", {id});
-  }
-};
-
 useEffect(() => {
-  if (wallet) {
     fetchSubscriptions();
-  }
 }, [wallet]);
 
   return (
@@ -268,7 +325,7 @@ useEffect(() => {
               {/* Subscriptions Grid */}
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-8">
                 {filteredSubscriptions.map((subscription, i) => (
-                  <SubscriptionCard subscription={subscription} key={i} />
+                  <SubscriptionCard subscription={subscription} services={services} key={i} />
                 ))}
               </div>
 
@@ -310,7 +367,13 @@ useEffect(() => {
 
             {/* My Subscriptions Tab */}
             <TabsContent value="my-subscriptions">
-              <MySubscription userCreatedSubscriptions={userCreatedSubscriptions} setUserCreatedSubscriptions={setUserCreatedSubscriptions}/>
+              <MySubscription 
+                userJoinedSubscriptions={userJoinedSubscriptions} 
+                setUserJoinedSubscriptions={setUserJoinedSubscriptions}
+                userCreatedSubscriptions={userCreatedSubscriptions} 
+                setUserCreatedSubscriptions={setUserCreatedSubscriptions}
+                services={services}
+              />
             </TabsContent>
 
           </Tabs>
