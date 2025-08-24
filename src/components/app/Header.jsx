@@ -6,10 +6,10 @@ import { Link } from 'react-router-dom'
  const Header = () => {
     return (
     <nav className="absolute top-0 z-20 w-full bg-zinc-800 backdrop-blur-xl border-b border-white/20">
-      <div className="mx-auto px-4 sm:px-6 py-6">
+      <div className="mx-auto px-4 sm:px-6 py-4">
         <div className="flex items-center justify-between">
           <Link to="/" className="flex items-center space-x-3 cursor-pointer">
-            <div className="bg-transparent w-12 h-12 rounded-xl flex items-center justify-center shadow-lg">
+            <div className="bg-transparent rounded-xl flex items-center justify-center shadow-lg">
               <img
                 src="./subuddy.png"
                 alt="DMSE"
