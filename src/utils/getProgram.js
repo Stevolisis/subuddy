@@ -1,26 +1,16 @@
-import * as anchor from "@project-serum/anchor";
+import { AnchorProvider, Program } from "@coral-xyz/anchor";
 import { Connection, PublicKey } from "@solana/web3.js";
-import idl from "./idl.json"; // export your Anchor IDL after deploy
+import idl from "./idl.json"; // your Anchor IDL
 
-// Your program ID from Anchor.toml or solana explorer
-const programID = new PublicKey("YOUR_PROGRAM_ID");
-
-// Choose network
-const network = "https://api.devnet.solana.com"; // or mainnet, localnet
-
-// Commitment level
-const opts = {
-  preflightCommitment: "processed",
-};
+// ✅ use PublicKey directly from @solana/web3.js
+const programID = new PublicKey("DeTyfcGvUY5nAnLbQA5SmqjVCNDWQt99tkoBAArjsuA3");
 
 export const getProgram = (wallet) => {
-  const connection = new Connection(network, opts.preflightCommitment);
+  const connection = new Connection("https://api.devnet.solana.com", "processed");
 
-  const provider = new anchor.AnchorProvider(
-    connection,
-    wallet, // wallet adapter signer
-    opts
-  );
+  const provider = new AnchorProvider(connection, wallet, {
+    preflightCommitment: "processed",
+  });
 
-  return new anchor.Program(idl, programID, provider);
+  return new Program(idl, provider);
 };

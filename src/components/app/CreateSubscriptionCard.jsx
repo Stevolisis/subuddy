@@ -11,7 +11,7 @@ const CreateSubscriptionCard = ({subscription}) => {
   return (
                             <Card key={subscription.id} className="bg-zinc-700 border-zinc-600">
                               <CardContent className="p-6">
-                                <div className="flex justify-between items-start flex-wrap sm:flex-unwrap gap-y-5 mb-4">
+                                <div className="flex justify-between items-start flex-wrap sm:flex-unwrap gap-y-5 sm:gap-y-0 mb-4">
                                   <div className="flex items-center gap-3">
                                     <div className="w-12 h-12 bg-white rounded-lg p-2 flex items-center justify-center">
                                       <img

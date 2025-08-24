@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -15,14 +15,18 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import CreateSubscription from '@/components/app/CreateSubscription';
 import SubscriptionCard from '@/components/app/SubscriptionCard';
 import MySubscription from '@/components/app/MySubscription';
+import { useAnchorWallet } from '@solana/wallet-adapter-react';
+import { getProgram } from '@/utils/getProgram';
+import { utils, BN } from "@coral-xyz/anchor";
+import { toast } from 'sonner';
 
 const Subscriptions = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [categoryFilter, setCategoryFilter] = useState('all');
   const [sortBy, setSortBy] = useState('popular');
-
+  const wallet = useAnchorWallet();
   const [activeTab, setActiveTab] = useState('browse');
-
+  const [onchainSubscriptions, setOnchainSubscriptions] = useState([]);
   const [userCreatedSubscriptions, setUserCreatedSubscriptions] = useState([
     {
       id: 1001,
@@ -67,118 +71,8 @@ const Subscriptions = () => {
     }
   ]);
 
-  const subscriptions = [
-    {
-      id: 1,
-      service: 'Google One',
-      image: 'https://upload.wikimedia.org/wikipedia/commons/c/c8/Google_One_logo.svg',
-      category: 'Cloud Storage',
-      price: 1.99,
-      totalSlots: 5,
-      remainingSlots: 2,
-      rating: 4.5,
-      description: '100GB cloud storage with Google services',
-      features: ['100GB storage', 'Google support', 'Family sharing', 'Photo editing']
-    },
-    {
-      id: 2,
-      service: 'Google One Premium',
-      image: 'https://upload.wikimedia.org/wikipedia/commons/c/c8/Google_One_logo.svg',
-      category: 'Cloud Storage',
-      price: 9.99,
-      totalSlots: 5,
-      remainingSlots: 3,
-      rating: 4.6,
-      description: '2TB cloud storage with premium features',
-      features: ['2TB storage', 'Premium support', 'VPN access', 'Advanced photo features']
-    },
-    {
-      id: 3,
-      service: 'YouTube Premium',
-      image: 'https://upload.wikimedia.org/wikipedia/commons/0/09/YouTube_full-color_icon_%282017%29.svg',
-      category: 'Entertainment',
-      price: 11.99,
-      totalSlots: 6,
-      remainingSlots: 1,
-      rating: 4.8,
-      description: 'Ad-free YouTube, YouTube Music, and offline downloads',
-      features: ['Ad-free videos', 'Background play', 'YouTube Music', 'Offline downloads']
-    },
-    {
-      id: 4,
-      service: 'YouTube Music Premium',
-      image: 'https://upload.wikimedia.org/wikipedia/commons/6/6a/Youtube_Music_icon.svg',
-      category: 'Music',
-      price: 9.99,
-      totalSlots: 6,
-      remainingSlots: 4,
-      rating: 4.4,
-      description: 'Ad-free music streaming with offline listening',
-      features: ['Ad-free music', 'Background play', 'Offline downloads', 'High quality audio']
-    },
-    {
-      id: 5,
-      service: 'Google Workspace',
-      image: 'https://upload.wikimedia.org/wikipedia/commons/5/5f/Google_Workspace_Logo.svg',
-      category: 'Productivity',
-      price: 6.00,
-      totalSlots: 1,
-      remainingSlots: 0,
-      rating: 4.7,
-      description: 'Professional email and productivity tools',
-      features: ['Custom email domain', 'Google Drive', 'Meet & Calendar', '30GB storage']
-    },
-    {
-      id: 6,
-      service: 'Google Workspace Standard',
-      image: 'https://upload.wikimedia.org/wikipedia/commons/5/5f/Google_Workspace_Logo.svg',
-      category: 'Productivity',
-      price: 12.00,
-      totalSlots: 3,
-      remainingSlots: 2,
-      rating: 4.8,
-      description: 'Enhanced productivity with 2TB storage per user',
-      features: ['Custom email', '2TB storage', 'Advanced Meet', 'Security controls']
-    },
-    {
-      id: 7,
-      service: 'Google Play Pass',
-      image: 'https://upload.wikimedia.org/wikipedia/commons/d/d0/Google_Play_Arrow_logo.svg',
-      category: 'Gaming',
-      price: 4.99,
-      totalSlots: 6,
-      remainingSlots: 5,
-      rating: 4.2,
-      description: 'Access to premium apps and games without ads',
-      features: ['Premium apps', 'No ads', 'In-app purchases', '1000+ games & apps']
-    },
-    {
-      id: 8,
-      service: 'Google Nest Aware',
-      image: 'https://upload.wikimedia.org/wikipedia/commons/4/4a/Logo_2013_Google.png',
-      category: 'Smart Home',
-      price: 6.00,
-      totalSlots: 4,
-      remainingSlots: 1,
-      rating: 4.3,
-      description: 'Smart home security with video history',
-      features: ['Video history', 'Intelligent alerts', 'Activity zones', 'Familiar face alerts']
-    },
-    {
-      id: 9,
-      service: 'Google Stadia Pro',
-      image: 'https://upload.wikimedia.org/wikipedia/commons/4/4a/Logo_2013_Google.png',
-      category: 'Gaming',
-      price: 9.99,
-      totalSlots: 4,
-      remainingSlots: 0,
-      rating: 3.8,
-      description: 'Cloud gaming with premium features',
-      features: ['4K gaming', 'Free monthly games', 'Exclusive discounts', 'HDR support']
-    }
-  ];
 
-  const filteredSubscriptions = subscriptions.filter(sub => {
+  const filteredSubscriptions = onchainSubscriptions.filter(sub => {
     const matchesSearch = sub.service.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          sub.category.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesCategory = categoryFilter === 'all' || sub.category === categoryFilter;
@@ -194,6 +88,74 @@ const Subscriptions = () => {
 
   const categories = ['All', 'Cloud Storage', 'Entertainment', 'Music', 'Productivity', 'Gaming', 'Smart Home'];
 
+const fetchSubscriptions = async () => {
+  const id = toast.loading("fetching subscriptions ...")
+  console.log("wallet: ", wallet);
+  if (!wallet) {
+    return toast.info("Please connect your wallet!", {id})
+  };
+
+  try {
+    const program = getProgram(wallet);
+    console.log("program: ", program);
+
+    // discriminator filter for Subscription
+    const accounts = await program.provider.connection.getProgramAccounts(program.programId, {
+      filters: [
+        {
+          memcmp: {
+            offset: 0,
+            bytes: utils.bytes.bs58.encode(
+              program.coder.accounts.accountDiscriminator("subscription")
+            ),
+          },
+        },
+      ],
+    });
+
+    console.log("raw subscription accounts:", accounts);
+
+    // decode accounts into proper objects
+    const subscriptions = accounts.map((acc) => {
+      const data = program.coder.accounts.decode("subscription", acc.account.data);
+      console.log("decoded subscription account:", data);
+      const pricePerSlotInLamports = data.pricePerSlot.toNumber();
+      const pricePerSlotInSol = pricePerSlotInLamports / 1e9;
+
+      return {
+        pubkey: acc.pubkey.toBase58(),
+        id: Number(data.subscriptionId), // u64 → number
+        service: data.serviceName,
+        email: data.creatorEmail,
+        creator: data.creator.toBase58(),
+        pricePerSlot: parseFloat(pricePerSlotInSol.toFixed(6)),
+        totalSlots: data.maxSlots,
+        filledSlots: data.filledSlots,
+        remainingSlots: data.maxSlots - data.filledSlots,
+        status: data.status,
+        joiners: data.joiners.map((j) => ({
+          email: j.email,
+          wallet: j.joiner.toBase58(),
+          confirmed: j.confirmed,
+        })),
+      };
+    });
+
+    console.log("fetched subscriptions: ", subscriptions);
+    setOnchainSubscriptions(subscriptions);
+    return toast.success("fetched successfully", {id})
+
+  } catch (err) {
+    console.error("Failed to fetch subscriptions:", err);
+    return toast.error("Failed to fetch subscription, try again!!", {id});
+  }
+};
+
+useEffect(() => {
+  if (wallet) {
+    fetchSubscriptions();
+  }
+}, [wallet]);
 
   return (
     <div className="bg-zinc-900">
@@ -211,7 +173,7 @@ const Subscriptions = () => {
             </p>
             
             {/* Create Subscription Button */}
-            <CreateSubscription setUserCreatedSubscriptions={setUserCreatedSubscriptions} userCreatedSubscriptions={userCreatedSubscriptions} />
+            <CreateSubscription setActiveTab={setActiveTab} fetchSubscriptions={fetchSubscriptions} />
           </div>
 
           {/* Tabs for Browse vs My Subscriptions */}
@@ -299,7 +261,7 @@ const Subscriptions = () => {
               {/* Results Count */}
               <div className="mb-6">
                 <p className="text-zinc-300">
-                  Showing {filteredSubscriptions.length} of {subscriptions.length} Google subscriptions
+                  Showing {filteredSubscriptions.length} of {onchainSubscriptions.length} Google subscriptions
                 </p>
               </div>
 
