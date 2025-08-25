@@ -69,25 +69,10 @@ const CreateSubscriptionCard = ({ subscription, services, fetchSubscriptions }) 
           escrow: escrowPda,
           systemProgram: anchor.web3.SystemProgram.programId,
         })
-        .transaction(); // 👈 build but don’t send
-
-      // ✅ Manually send with fresh blockhash
-      const { blockhash, lastValidBlockHeight } = await program.provider.connection.getLatestBlockhash();
-
-      tx.recentBlockhash = blockhash;
-      tx.feePayer = wallet.publicKey;
-
-      const signed = await wallet.signTransaction(tx);
-      const sig = await program.provider.connection.sendRawTransaction(signed.serialize(), {
-        skipPreflight: false,
-        preflightCommitment: "processed",
-      });
-      await program.provider.connection.confirmTransaction({
-        signature: sig,
-        blockhash,
-        lastValidBlockHeight,
-      });
-
+        .rpc({
+          commitment: "confirmed",   // or "finalized"
+          skipPreflight: false,
+        });
       console.log('Withdraw transaction signature:', tx);
       const updatedSub = await program.account.subscription.fetch(subscriptionPda);
       console.log('Subscription after withdraw:', updatedSub);

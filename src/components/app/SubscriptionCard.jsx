@@ -73,24 +73,9 @@ const SubscriptionCard = ({ fetchSubscriptions, subscription, services }) => {
           escrow: escrowPda,
           systemProgram: anchor.web3.SystemProgram.programId,
         })
-          .transaction(); // 👈 build but don’t send
-
-        // ✅ Manually send with fresh blockhash
-        const { blockhash, lastValidBlockHeight } =
-          await program.provider.connection.getLatestBlockhash();
-
-        tx.recentBlockhash = blockhash;
-        tx.feePayer = wallet.publicKey;
-
-        const signed = await wallet.signTransaction(tx);
-        const sig = await program.provider.connection.sendRawTransaction(signed.serialize(), {
+        .rpc({
+          commitment: "confirmed",   // or "finalized"
           skipPreflight: false,
-          preflightCommitment: "processed",
-        });
-        await program.provider.connection.confirmTransaction({
-          signature: sig,
-          blockhash,
-          lastValidBlockHeight,
         });
 
 

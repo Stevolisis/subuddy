@@ -65,7 +65,10 @@ const JoinedSubscriptionCard = ({ subscription, services, fetchSubscriptions }) 
           subscription: subscriptionPda,
           escrow: escrowPda,
         })
-        .rpc();
+        .rpc({
+          commitment: "confirmed",   // or "finalized"
+          skipPreflight: false,
+        });
 
       console.log('Confirm transaction signature:', tx);
       const updatedSub = await program.account.subscription.fetch(subscriptionPda);

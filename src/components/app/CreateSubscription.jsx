@@ -77,7 +77,10 @@ const CreateSubscription = ({fetchSubscriptions,setActiveTab}) => {
                 escrow: escrowPda,
                 systemProgram: anchor.web3.SystemProgram.programId,
             })
-            .rpc();
+            .rpc({
+                commitment: "confirmed",
+                skipPreflight: false,
+            });
         console.log('Transaction signature:', tx);
 
         const sub = await program.account.subscription.fetch(subscriptionPda);
