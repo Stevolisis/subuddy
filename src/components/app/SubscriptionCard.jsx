@@ -73,25 +73,25 @@ const SubscriptionCard = ({ fetchSubscriptions, subscription, services }) => {
           escrow: escrowPda,
           systemProgram: anchor.web3.SystemProgram.programId,
         })
-  .transaction(); // 👈 build but don’t send
+          .transaction(); // 👈 build but don’t send
 
-// ✅ Manually send with fresh blockhash
-const { blockhash, lastValidBlockHeight } =
-  await program.provider.connection.getLatestBlockhash();
+        // ✅ Manually send with fresh blockhash
+        const { blockhash, lastValidBlockHeight } =
+          await program.provider.connection.getLatestBlockhash();
 
-tx.recentBlockhash = blockhash;
-tx.feePayer = wallet.publicKey;
+        tx.recentBlockhash = blockhash;
+        tx.feePayer = wallet.publicKey;
 
-const signed = await wallet.signTransaction(tx);
-const sig = await program.provider.connection.sendRawTransaction(signed.serialize(), {
-  skipPreflight: false,
-  preflightCommitment: "processed",
-});
-await program.provider.connection.confirmTransaction({
-  signature: sig,
-  blockhash,
-  lastValidBlockHeight,
-});
+        const signed = await wallet.signTransaction(tx);
+        const sig = await program.provider.connection.sendRawTransaction(signed.serialize(), {
+          skipPreflight: false,
+          preflightCommitment: "processed",
+        });
+        await program.provider.connection.confirmTransaction({
+          signature: sig,
+          blockhash,
+          lastValidBlockHeight,
+        });
 
 
       console.log('Join transaction signature:', tx);
@@ -99,21 +99,26 @@ await program.provider.connection.confirmTransaction({
       console.log('Subscription after join:', updatedSub);
       toast.success('Joined subscription successfully!', { id });
 
-      // Update local state or refresh subscriptions (if parent provides a callback)
       setJoinerEmail('');
       setShowJoinDialog(false);
       fetchSubscriptions();
       
     } catch (error) {
-      console.error('Error joining subscription:', error);
+      console.error('Error joining subscription (full error):', error);
 
-      let errorMsg = 'Failed to join subscription';
+      let errorMsg = 'Join failed. Try again or contact support.';
 
-      // Anchor errors often have `error.error.errorMessage`
-      if (error.error?.errorMessage) {
-        errorMsg = error.error.errorMessage;
+      if (error.error) {
+        if (error.error.errorMessage) {
+          errorMsg = error.error.errorMessage;
+        } 
+      } else if (error.logs) {
+        const logMsg = error.logs.find((log) => log.includes('Error Message:'));
+        if (logMsg) {
+          errorMsg = logMsg.split('Error Message:')[1].trim().split('.')[0] || errorMsg;
+        }
       } else if (error.message) {
-        errorMsg = error.message;
+        errorMsg = error.message.split('\n')[0].split('.')[0] || errorMsg;
       }
 
       toast.error(errorMsg, { id });

@@ -84,13 +84,11 @@ const CreateSubscription = ({fetchSubscriptions,setActiveTab}) => {
         console.log('Subscription created:', sub);
         toast.success('Subscription created!', {id});
 
-        // Reset form
         setEmail('');
         setPricePerSlot('');
         setSelectedService('');
         setSlots(1);
         
-        // Switch to the "My Subscriptions" tab
         setActiveTab('my-subscriptions');
         fetchSubscriptions();
         return;
@@ -98,13 +96,19 @@ const CreateSubscription = ({fetchSubscriptions,setActiveTab}) => {
     }catch (error) {
         console.error('Error joining subscription:', error);
 
-        let errorMsg = 'Failed to create subscription';
+        let errorMsg = 'Join failed. Try again or contact support.';
 
-        // Anchor errors often have `error.error.errorMessage`
-        if (error.error?.errorMessage) {
-        errorMsg = error.error.errorMessage;
+        if (error.error) {
+            if (error.error.errorMessage) {
+            errorMsg = error.error.errorMessage;
+            } 
+        } else if (error.logs) {
+            const logMsg = error.logs.find((log) => log.includes('Error Message:'));
+            if (logMsg) {
+            errorMsg = logMsg.split('Error Message:')[1].trim().split('.')[0] || errorMsg;
+            }
         } else if (error.message) {
-        errorMsg = error.message;
+            errorMsg = error.message.split('\n')[0].split('.')[0] || errorMsg;
         }
 
         toast.error(errorMsg, { id });
