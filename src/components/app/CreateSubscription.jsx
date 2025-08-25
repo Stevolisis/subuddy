@@ -177,7 +177,7 @@ const CreateSubscription = ({fetchSubscriptions,setActiveTab}) => {
                     </div>
                     <div className="grid grid-cols-4 items-center gap-4">
                         <Label htmlFor="price" className="text-right text-zinc-300">
-                            Price per Slot
+                            Price per Slot (SOL)
                         </Label>
                         <Input
                             id="price"

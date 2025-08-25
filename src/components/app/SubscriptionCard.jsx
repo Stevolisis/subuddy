@@ -163,7 +163,7 @@ const SubscriptionCard = ({ fetchSubscriptions, subscription, services }) => {
           </Badge>
           <div className="flex items-center gap-1" style={{ color: '#efe000' }}>
             <DollarSign className="w-4 h-4" />
-            <span className="font-bold">${subscription.pricePerSlot}</span>
+            <span className="font-bold">{subscription.pricePerSlot} SOL</span>
             <span className="text-zinc-400 text-sm">/month</span>
           </div>
         </div>

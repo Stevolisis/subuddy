@@ -159,7 +159,7 @@ const CreateSubscriptionCard = ({ subscription, services, fetchSubscriptions }) 
             <DollarSign className="w-5 h-5 text-yellow-400" />
             <div>
               <p className="text-zinc-400 text-sm">Price per slot</p>
-              <p className="text-white font-medium">${subscription.pricePerSlot}</p>
+              <p className="text-white font-medium">{subscription.pricePerSlot} SOL</p>
             </div>
           </div>
           <div className="flex items-center gap-2">
@@ -173,7 +173,7 @@ const CreateSubscriptionCard = ({ subscription, services, fetchSubscriptions }) 
             <CreditCard className="w-5 h-5 text-yellow-400" />
             <div>
               <p className="text-zinc-400 text-sm">Total revenue</p>
-              <p className="text-white font-medium">${subscription.pricePerSlot * (subscription.totalSlots - subscription.remainingSlots)}</p>
+              <p className="text-white font-medium">{subscription.pricePerSlot * (subscription.totalSlots - subscription.remainingSlots)} SOL</p>
             </div>
           </div>
           {subscription.joiners.length === subscription.totalSlots && (
@@ -232,7 +232,7 @@ const CreateSubscriptionCard = ({ subscription, services, fetchSubscriptions }) 
               onClick={handleWithdrawFunds}
               className="bg-yellow-600 hover:bg-yellow-700 text-white"
             >
-              Withdraw ${subscription.pricePerSlot * subscription.filledSlots}
+              Withdraw {subscription.pricePerSlot * subscription.filledSlots} SOL
             </Button>
           </div>
         )}
@@ -252,7 +252,7 @@ const CreateSubscriptionCard = ({ subscription, services, fetchSubscriptions }) 
             <DialogHeader>
               <DialogTitle>Confirm Withdrawal</DialogTitle>
               <DialogDescription className="text-zinc-400">
-                Are you sure you want to withdraw ${subscription.pricePerSlot * subscription.filledSlots} from the {subscription.service} subscription?
+                Are you sure you want to withdraw {subscription.pricePerSlot * subscription.filledSlots} SOL from the {subscription.service} subscription?
                 <br />
                 <strong>Warning:</strong> This action will close the escrow and mark the subscription as completed.
               </DialogDescription>
