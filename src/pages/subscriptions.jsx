@@ -166,6 +166,7 @@ const Subscriptions = () => {
         const data = program.coder.accounts.decode("subscription", acc.account.data);
         const pricePerSlotInLamports = data.pricePerSlot.toNumber();
         const pricePerSlotInSol = pricePerSlotInLamports / 1e9;
+        console.log("Decoded subscription data:", data);
 
         return {
           pubkey: acc.pubkey.toBase58(),
@@ -371,6 +372,7 @@ const Subscriptions = () => {
                 userCreatedSubscriptions={userCreatedSubscriptions} 
                 setUserCreatedSubscriptions={setUserCreatedSubscriptions}
                 services={services}
+                fetchSubscriptions={fetchSubscriptions}
               />
             </TabsContent>
 

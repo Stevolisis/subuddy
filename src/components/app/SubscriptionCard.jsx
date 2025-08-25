@@ -53,11 +53,13 @@ const SubscriptionCard = ({ fetchSubscriptions, subscription, services }) => {
     setIsJoining(true);
     try {
       const program = getProgram(wallet);
-      const [subscriptionPda] = getSubscriptionPDA(wallet.publicKey, subscription.id, program.programId);
+      const [subscriptionPda] = getSubscriptionPDA(
+        new anchor.web3.PublicKey(subscription.creator), 
+        subscription.id, 
+        program.programId
+      );
       const [escrowPda] = getEscrowPDA(subscriptionPda, program.programId);
-      console.log('Joining subscription with ID:', subscription.id);
-      console.log('Subscription PDA:', subscriptionPda.toBase58());
-      console.log('Escrow PDA:', escrowPda.toBase58());
+
 
       const tx = await program.methods
         .joinSubscription(
@@ -71,7 +73,26 @@ const SubscriptionCard = ({ fetchSubscriptions, subscription, services }) => {
           escrow: escrowPda,
           systemProgram: anchor.web3.SystemProgram.programId,
         })
-        .rpc();
+  .transaction(); // 👈 build but don’t send
+
+// ✅ Manually send with fresh blockhash
+const { blockhash, lastValidBlockHeight } =
+  await program.provider.connection.getLatestBlockhash();
+
+tx.recentBlockhash = blockhash;
+tx.feePayer = wallet.publicKey;
+
+const signed = await wallet.signTransaction(tx);
+const sig = await program.provider.connection.sendRawTransaction(signed.serialize(), {
+  skipPreflight: false,
+  preflightCommitment: "processed",
+});
+await program.provider.connection.confirmTransaction({
+  signature: sig,
+  blockhash,
+  lastValidBlockHeight,
+});
+
 
       console.log('Join transaction signature:', tx);
       const updatedSub = await program.account.subscription.fetch(subscriptionPda);
@@ -85,9 +106,20 @@ const SubscriptionCard = ({ fetchSubscriptions, subscription, services }) => {
       
     } catch (error) {
       console.error('Error joining subscription:', error);
-      toast.error(error.message || 'Failed to join subscription', { id });
+
+      let errorMsg = 'Failed to join subscription';
+
+      // Anchor errors often have `error.error.errorMessage`
+      if (error.error?.errorMessage) {
+        errorMsg = error.error.errorMessage;
+      } else if (error.message) {
+        errorMsg = error.message;
+      }
+
+      toast.error(errorMsg, { id });
     } finally {
       setIsJoining(false);
+      setShowJoinDialog(false);
     }
   };
 

@@ -22,6 +22,7 @@ const CreateSubscription = ({fetchSubscriptions,setActiveTab}) => {
     const wallet = useAnchorWallet();
     const { connected } = useAnchorWallet() || { connected: false };
 
+      
     const googleServices = [
         "Google One",
         "Google One Premium",
@@ -42,8 +43,6 @@ const CreateSubscription = ({fetchSubscriptions,setActiveTab}) => {
       return;
     }
 
-    console.log('Wallet connected:', connected);
-    console.log('Wallet:', wallet);
     if(!wallet) {
         toast.info('Please connect your wallet', {id});
         return;
@@ -57,9 +56,11 @@ const CreateSubscription = ({fetchSubscriptions,setActiveTab}) => {
         const program = getProgram(wallet);
         const subscriptionId = uuidv4().replace(/-/g, "").slice(0, 9);
         const parsedPricePerSlot = parseFloat(pricePerSlot);
-        console.log('Creating subscription with ID:', subscriptionId);
-
-        const [subscriptionPda] = getSubscriptionPDA(wallet.publicKey, subscriptionId, program.programId);
+        const [subscriptionPda] = getSubscriptionPDA(
+            new anchor.web3.PublicKey(wallet.publicKey), 
+            subscriptionId, 
+            program.programId
+        );
         const [escrowPda] = getEscrowPDA(subscriptionPda, program.programId);
 
         const tx = await program.methods
@@ -84,20 +85,29 @@ const CreateSubscription = ({fetchSubscriptions,setActiveTab}) => {
         toast.success('Subscription created!', {id});
 
         // Reset form
-        // setEmail('');
-        // setPricePerSlot('');
-        // setSelectedService('');
-        // setSlots(1);
+        setEmail('');
+        setPricePerSlot('');
+        setSelectedService('');
+        setSlots(1);
         
         // Switch to the "My Subscriptions" tab
         setActiveTab('my-subscriptions');
         fetchSubscriptions();
         return;
 
-    }catch(error){
-      console.error("Error creating subscription:", error);
-      toast.error(error.message || 'Failed to create subscription', {id});
-      return;
+    }catch (error) {
+        console.error('Error joining subscription:', error);
+
+        let errorMsg = 'Failed to create subscription';
+
+        // Anchor errors often have `error.error.errorMessage`
+        if (error.error?.errorMessage) {
+        errorMsg = error.error.errorMessage;
+        } else if (error.message) {
+        errorMsg = error.message;
+        }
+
+        toast.error(errorMsg, { id });
     }
   };
 

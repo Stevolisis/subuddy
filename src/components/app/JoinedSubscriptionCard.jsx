@@ -19,7 +19,7 @@ import { BN } from 'bn.js';
 import { toast } from 'sonner';
 import * as anchor from "@coral-xyz/anchor";
 
-const JoinedSubscriptionCard = ({ subscription, services }) => {
+const JoinedSubscriptionCard = ({ subscription, services, fetchSubscriptions }) => {
   const status = ['Open', 'Filled', 'Confirmed', 'Completed', 'Refunded'];
   const wallet = useAnchorWallet();
   const yourSlot = (subscription.joiners || []).findIndex(
@@ -50,14 +50,10 @@ const JoinedSubscriptionCard = ({ subscription, services }) => {
       const program = getProgram(wallet);
       const [subscriptionPda] = getSubscriptionPDA(
         new anchor.web3.PublicKey(subscription.creator),
-        subscription.id.toString(),
+        subscription.id,
         program.programId
       );
       const [escrowPda] = getEscrowPDA(subscriptionPda, program.programId);
-      console.log('Confirming subscription with ID:', subscription.id);
-      console.log('Subscription PDA:', subscriptionPda.toBase58());
-      console.log('Escrow PDA:', escrowPda.toBase58());
-      console.log('Joiner:', wallet.publicKey.toBase58());
 
       const tx = await program.methods
         .confirmInvite(
@@ -77,10 +73,20 @@ const JoinedSubscriptionCard = ({ subscription, services }) => {
       toast.success('Subscription confirmed successfully!', { id });
 
       setShowConfirmDialog(false);
-      // fetchSubscriptions(); // Uncomment if prop is available
+      fetchSubscriptions();
     } catch (error) {
-      console.error('Error confirming subscription:', error);
-      toast.error(error.message || 'Failed to confirm subscription', { id });
+      console.error('Error joining subscription:', error);
+
+      let errorMsg = 'Failed to confirm subscription';
+
+      // Anchor errors often have `error.error.errorMessage`
+      if (error.error?.errorMessage) {
+        errorMsg = error.error.errorMessage;
+      } else if (error.message) {
+        errorMsg = error.message;
+      }
+
+      toast.error(errorMsg, { id });
     } finally {
       setIsConfirming(false);
     }
@@ -142,7 +148,9 @@ const JoinedSubscriptionCard = ({ subscription, services }) => {
           </div>
         </div>
 
-        {subscription.status === 1 && ( // Status 1 = Filled
+        {subscription.status === 1 && subscription.joiners?.some(
+            j => j.wallet?.toString() === wallet.publicKey?.toString() && j.confirmed !== true
+          ) && ( // Status 1 = Filled
           <div className="bg-blue-900/20 border border-blue-700 rounded-lg p-4 mb-4">
             <div className="flex items-center gap-2 mb-2">
               <CheckCircle className="w-5 h-5 text-blue-400" />
@@ -160,7 +168,9 @@ const JoinedSubscriptionCard = ({ subscription, services }) => {
           </div>
         )}
 
-        {!subscription.needsConfirmation && subscription.status === 2 && ( // Status 2 = Confirmed
+        { subscription.joiners?.some(
+            j => j.wallet?.toString() === wallet.publicKey?.toString() && j.confirmed === true
+          ) && ( // Status 2 = Confirmed
           <div className="bg-green-900/20 border border-green-700 rounded-lg p-4">
             <div className="flex items-center gap-2">
               <CheckCircle className="w-5 h-5 text-green-400" />

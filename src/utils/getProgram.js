@@ -2,9 +2,6 @@ import { AnchorProvider, Program } from "@coral-xyz/anchor";
 import { Connection, PublicKey } from "@solana/web3.js";
 import idl from "./idl.json"; // your Anchor IDL
 
-// ✅ use PublicKey directly from @solana/web3.js
-const programID = new PublicKey("DeTyfcGvUY5nAnLbQA5SmqjVCNDWQt99tkoBAArjsuA3");
-
 export const getProgram = (wallet) => {
   const connection = new Connection("https://api.devnet.solana.com", "processed");
 

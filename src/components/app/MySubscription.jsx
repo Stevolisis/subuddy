@@ -8,10 +8,9 @@ import JoinedSubscriptionCard from './JoinedSubscriptionCard';
 
 const MySubscription = ({
   userJoinedSubscriptions,
-  setUserJoinedSubscriptions,
   userCreatedSubscriptions, 
-  setUserCreatedSubscriptions,
-  services
+  services,
+  fetchSubscriptions
 }) => {
   const [mySubscriptionsTab, setMySubscriptionsTab] = useState('created');
 
@@ -57,7 +56,7 @@ const MySubscription = ({
             ) : (
               <div className="space-y-6">
                 {userCreatedSubscriptions.map((subscription, i) => (
-                  <CreateSubscriptionCard subscription={subscription} services={services} key={i}/>
+                  <CreateSubscriptionCard fetchSubscriptions={fetchSubscriptions} subscription={subscription} services={services} key={i}/>
                 ))}
               </div>
             )}
@@ -76,7 +75,7 @@ const MySubscription = ({
             ) : (
               <div className="space-y-6">
                 {userJoinedSubscriptions.map((subscription, i) => (
-                  <JoinedSubscriptionCard subscription={subscription} services={services} key={i}/>
+                  <JoinedSubscriptionCard fetchSubscriptions={fetchSubscriptions} subscription={subscription} services={services} key={i}/>
                 ))}
               </div>
             )}
