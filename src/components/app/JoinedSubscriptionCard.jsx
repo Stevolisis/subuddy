@@ -101,7 +101,7 @@ const JoinedSubscriptionCard = ({ subscription, services, fetchSubscriptions }) 
   return (
     <Card key={subscription.id} className="bg-zinc-700 border-zinc-600">
       <CardContent className="p-6">
-        <div className="flex items-start justify-between mb-4">
+        <div className="flex items-start justify-between flex-wrap sm:flex-nowrap gap-y-4 sm:gap-y-0 mb-4">
           <div className="flex items-center gap-3">
             <div className="w-12 h-12 bg-white rounded-lg p-2 flex items-center justify-center">
               <img
@@ -129,7 +129,7 @@ const JoinedSubscriptionCard = ({ subscription, services, fetchSubscriptions }) 
                   ? '#10b981'
                   : status[subscription.status] === 'Open'
                   ? '#f59e0b'
-                  : '#ef4444',
+                  : 'green',
               color: 'white',
             }}
           >

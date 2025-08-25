@@ -162,15 +162,37 @@ const Subscriptions = () => {
 
 
       // decode accounts into proper objects
-      const subscriptions = accounts.map((acc) => {
+    const subscriptions = accounts
+      .map((acc) => {
+        // Check if account data is valid before decoding
+        if (!acc.account.data || acc.account.data.length === 0) {
+          console.warn('Skipping account with empty or invalid data:', acc.pubkey.toBase58());
+          return null;
+        }
+
         const data = program.coder.accounts.decode("subscription", acc.account.data);
+        if (!data) {
+          console.warn('Failed to decode account data:', acc.pubkey.toBase58());
+          return null;
+        }
+
+        // Return null for suspicious subscription IDs
+        if ([9529237, 8120167].includes(data.subscriptionId.toNumber())) {
+          console.log("Found suspicious subscription, skipping:", data.subscriptionId.toNumber());
+          return null;
+        }
+
+        return { acc, data }; // Return object with both acc and data
+      })
+      .filter((item) => item !== null) // Filter out nulls
+      .map(({ acc, data }) => {
         const pricePerSlotInLamports = data.pricePerSlot.toNumber();
         const pricePerSlotInSol = pricePerSlotInLamports / 1e9;
         console.log("Decoded subscription data:", data);
 
         return {
-          pubkey: acc.pubkey.toBase58(),
-          id: Number(data.subscriptionId), // u64 → number
+          pubkey: acc.pubkey.toBase58(), // Now acc is in scope
+          id: Number(data.subscriptionId),
           service: data.serviceName,
           email: data.creatorEmail,
           creator: data.creator.toBase58(),
@@ -195,7 +217,7 @@ const Subscriptions = () => {
         sub.joiners.some((joiner) => joiner.wallet === wallet.publicKey.toBase58())
       );
 
-      console.log("userCreatedSubscriptions: ", userCreatedSubscriptions);
+      console.log("userCreatedSubscriptions: ", subscriptions);
       console.log("userJoinedSubscriptions: ", userJoinedSubscriptions);
       setOnchainSubscriptions(subscriptions);
       setUserCreatedSubscriptions(userCreatedSubscriptions);
